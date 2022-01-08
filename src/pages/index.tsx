@@ -1,6 +1,7 @@
 import Button from "../components/Button"
-import Layout from "../components/layout"
+import Form from "../components/Form"
 import Table from "../components/Table"
+import Layout from "../components/layout"
 import Client from "../core/clients"
 
 export default function Home() {
@@ -20,7 +21,7 @@ export default function Home() {
   return (
     <div className={`
     flex justify-center items-center h-screen
-    bg-gradient-to-r from-blue-500 to-purple-500
+    bg-gradient-to-r from-dusk to-gray-700
     text-white text-2xl
     `}>
       <Layout tittle="Cadastro simples">
@@ -28,6 +29,7 @@ export default function Home() {
           <Button color="green" classname="mb-4" >Novo Cliente</Button>
         </div>
         <Table deletedClient={deleteClient} selectedClient={selectClient} clients={clients} />
+      <Form client={clients[0]} />
       </Layout>
     </div>
   )

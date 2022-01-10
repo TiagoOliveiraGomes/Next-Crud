@@ -3,8 +3,10 @@ import Form from "../components/Form"
 import Table from "../components/Table"
 import Layout from "../components/layout"
 import Client from "../core/clients"
+import { useState } from "react"
 
 export default function Home() {
+  const [visibleComponent, setVisibleComponent] = useState("table")
   const clients = [
     new Client('1', 'Ana', 34),
     new Client('2', 'José', 25),
@@ -17,6 +19,9 @@ export default function Home() {
   function deleteClient (client: Client) {
     console.log("Excluir... " + client.name)
   }
+  function changeClient (client: Client) {
+    console.log(client)
+  }
 
   return (
     <div className={`
@@ -25,11 +30,17 @@ export default function Home() {
     text-white text-2xl
     `}>
       <Layout tittle="Cadastro simples">
-        <div className="flex justify-end">
-          <Button color="green" classname="mb-4" >Novo Cliente</Button>
-        </div>
-        <Table deletedClient={deleteClient} selectedClient={selectClient} clients={clients} />
-      <Form client={clients[0]} />
+        {visibleComponent === "table" &&
+          <div>  
+            <div className="flex justify-end">
+              <Button onClick={() => setVisibleComponent("form")} color="green" classname="mb-4" >Novo Cliente</Button>
+            </div>
+            <Table deletedClient={deleteClient} selectedClient={selectClient} clients={clients} />
+          </div>
+        }
+      {visibleComponent === "form" &&
+        <Form changeClient={changeClient} visibleComponentChange={()=> setVisibleComponent("table")} client={clients[0]} />
+      }
       </Layout>
     </div>
   )

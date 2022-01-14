@@ -3,17 +3,29 @@ import Form from "../components/Form"
 import Table from "../components/Table"
 import Layout from "../components/layout"
 import Client from "../core/clients"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import clientRepository from "../core/interfaces/client_repository"
+import ClientCollection from "../backend/db/Client_Collection"
 
 export default function Home() {
+  
+  const repo: clientRepository = new ClientCollection()
+
   const [client, setClient] = useState<Client>(Client.void())
+  const [clientList, setClientList] = useState<Client[]>([])
   const [visibleComponent, setVisibleComponent] = useState<"table"|"form">("table")
-  const clients = [
-    new Client('1', 'Ana', 34),
-    new Client('2', 'José', 25),
-    new Client('3', 'Paulo', 14),
-    new Client('4', 'Pedro', 36)
-  ]
+
+  useEffect(() => {
+    let cleanup = true
+    cleanup && getAll()
+    return () => {cleanup = false}
+  }, [])
+
+  async function getAll() {
+   const allAdata = await repo.getAll()
+   setClientList(allAdata)
+   setVisibleComponent("table")
+  }
   function selectClient (client: Client) {
     setClient(client)
     setVisibleComponent("form")
@@ -21,12 +33,13 @@ export default function Home() {
   function deleteClient (client: Client) {
     console.log("Excluir... " + client.name)
   }
-   function newClient () {
+   async function newClient () {
     setClient(Client.void())
     setVisibleComponent("form")
   }
-  function changeClient (client: Client) {
-    console.log(client)
+  async function SaveChangesClient (client: Client) {
+    await repo.save(client)
+    getAll()
   }
 
   return (
@@ -41,11 +54,11 @@ export default function Home() {
             <div className="flex justify-end">
               <Button onClick={newClient} color="green" classname="mb-4" >Novo Cliente</Button>
             </div>
-            <Table deletedClient={deleteClient} selectedClient={selectClient} clients={clients} />
+            <Table deletedClient={deleteClient} selectedClient={selectClient} clients={clientList} />
           </div>
         }
       {visibleComponent === "form" &&
-        <Form changeClient={changeClient} visibleComponentChange={()=> setVisibleComponent("table")} client={client} />
+        <Form changeClient={SaveChangesClient} visibleComponentChange={()=> setVisibleComponent("table")} client={client} />
       }
       </Layout>
     </div>

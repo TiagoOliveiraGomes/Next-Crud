@@ -1,8 +1,7 @@
 import Client from "../../core/clients";
 import clientRepository from "../../core/interfaces/client_repository";
-import firestore, { addDoc, collection, deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
-import firebase from "../config";
-import dataBase from "../config";
+import firestore, { addDoc, collection, deleteDoc, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
+import { dataBase } from '../config'
 
 export default class ClientCollection implements clientRepository {
   #conversor = {
@@ -20,7 +19,7 @@ export default class ClientCollection implements clientRepository {
         return new Client(snapshot.id, data.name, data.age);
       },
     };
-  #clientCollection = collection(firebase, 'clients').withConverter(this.#conversor)
+  #clientCollection = collection(dataBase, 'clients').withConverter(this.#conversor)
 
   async save(client: Client): Promise<Client> {
     if(client?.id){
@@ -36,6 +35,8 @@ export default class ClientCollection implements clientRepository {
     return await deleteDoc(doc(dataBase, 'clients', client.id))
   }
   async getAll(): Promise<Client[]> {
-    return null;
+    const clientsSnapshot = await getDocs(this.#clientCollection)
+    const clientsList = clientsSnapshot.docs.map(doc => doc.data()) ?? []
+    return clientsList;
   }
 }

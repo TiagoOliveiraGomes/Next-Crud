@@ -30,8 +30,9 @@ export default function Home() {
     setClient(client)
     setVisibleComponent("form")
   }
-  function deleteClient (client: Client) {
-    console.log("Excluir... " + client.name)
+  async function deleteClient (client: Client) {
+    await repo.delete(client)
+    getAll()
   }
    async function newClient () {
     setClient(Client.void())

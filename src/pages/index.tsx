@@ -2,15 +2,22 @@ import Button from "../components/Button"
 import Form from "../components/Form"
 import Table from "../components/Table"
 import Layout from "../components/layout"
-import Client from "../core/clients"
-import { useEffect, useState } from "react"
-import clientRepository from "../core/interfaces/client_repository"
-import ClientCollection from "../backend/db/Client_Collection"
 import useClient from "../hooks/useClient"
+import Lottie from 'react-lottie'
+import * as animationData from '../../assets/loading_animation2.json'
+import { useEffect, useState } from "react"
 
 export default function Home() {
-
-  const {client, clientList, newClient, selectClient, deleteClient, SaveChangesClient, setTable, visible_table, visible_form } = useClient()
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      PreserveAspectRatio: 'xMidYMid slice'
+    }
+  }
+  const {client, clientList, newClient, selectClient, deleteClient, SaveChangesClient, setTable, visible_table, visible_form, isLoading } = useClient()
+  const Loading_Animation = <Lottie options={defaultOptions} height={100} width={100}/>
 
   return (
     <div className={`
@@ -24,7 +31,7 @@ export default function Home() {
             <div className="flex justify-end">
               <Button onClick={newClient} color="green" classname="mb-4" >Novo Cliente</Button>
             </div>
-            <Table deletedClient={deleteClient} selectedClient={selectClient} clients={clientList} />
+            {isLoading?Loading_Animation: <Table deletedClient={deleteClient} selectedClient={selectClient} clients={clientList} /> }
           </div>
         }
       {visible_form &&

@@ -1,5 +1,7 @@
 import Client from "../core/clients";
 import { EditIcon, TrashIcon } from "./icons";
+import Lottie from 'react-lottie'
+import * as animationData from '../../assets/loading_animation2.json'
 
 interface TableProps {
   clients: Client[];
@@ -8,6 +10,14 @@ interface TableProps {
 }
 
 export default function Table(props: TableProps) {
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      PreserveAspectRatio: 'xMidYMid slice'
+    }
+  }
 
   const showActions = props.deletedClient || props.selectedClient
   const renderHeader = (
@@ -52,6 +62,8 @@ export default function Table(props: TableProps) {
     );
   });
 
+  const Loading_Animation = <Lottie options={defaultOptions} height={400} width={400}/>
+
   return (
     <table className="w-full rounded-xl overflow-hidden">
       <thead
@@ -61,7 +73,7 @@ export default function Table(props: TableProps) {
       >
         {renderHeader}
       </thead>
-      <tbody>{renderData}</tbody>
+      <tbody>{renderData? renderData : Loading_Animation}</tbody>
     </table>
   );
 }

@@ -2,15 +2,10 @@ import Button from "../components/Button"
 import Form from "../components/Form"
 import Table from "../components/Table"
 import Layout from "../components/layout"
-import Client from "../core/clients"
-import { useEffect, useState } from "react"
-import clientRepository from "../core/interfaces/client_repository"
-import ClientCollection from "../backend/db/Client_Collection"
 import useClient from "../hooks/useClient"
 
 export default function Home() {
-
-  const {client, clientList, newClient, selectClient, deleteClient, SaveChangesClient, setTable, visible_table, visible_form } = useClient()
+  const {client, clientList, newClient, selectClient, deleteClient, SaveChangesClient, setTable, visible_table, visible_form, getAll } = useClient()
 
   return (
     <div className={`
@@ -18,7 +13,7 @@ export default function Home() {
     bg-gradient-to-r from-dusk to-gray-700
     text-white text-2xl
     `}>
-      <Layout tittle="Cadastro simples">
+      {<Layout tittle="Cadastro simples">
         {visible_table &&
           <div>  
             <div className="flex justify-end">
@@ -28,9 +23,9 @@ export default function Home() {
           </div>
         }
       {visible_form &&
-        <Form changeClient={SaveChangesClient} visibleComponentChange={()=> setTable()} client={client} />
+        <Form changeClient={SaveChangesClient} visibleComponentChange={()=> setTable()} updateList={getAll} client={client} />
       }
-      </Layout>
+      </Layout>}
     </div>
   )
 }

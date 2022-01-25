@@ -10,6 +10,7 @@ export default function useClient () {
     const {setForm, setTable, visible_form, visible_table} = switch_interface()
     const [client, setClient] = useState<Client>(Client.void())
     const [clientList, setClientList] = useState<Client[]>([])
+    const [isLoading, setIsLoading] = useState<boolean>(true)
   
     useEffect(() => {
       let cleanup = true
@@ -18,9 +19,11 @@ export default function useClient () {
     }, [])
   
     async function getAll() {
+      setIsLoading(true)
      const allAdata = await repo.getAll()
      setClientList(allAdata)
      setTable()
+     setIsLoading(false)
     }
     function selectClient (client: Client) {
       setClient(client)
@@ -42,6 +45,7 @@ export default function useClient () {
     return {
         client,
         clientList,
+        getAll,
         selectClient,
         newClient,
         SaveChangesClient,
@@ -49,5 +53,6 @@ export default function useClient () {
         setTable,
         visible_table,
         visible_form,
+        isLoading,
     }
 }

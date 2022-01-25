@@ -1,25 +1,44 @@
 import Client from "../core/clients";
 import { EditIcon, TrashIcon } from "./icons";
-import Lottie from 'react-lottie'
-import * as animationData from '../../assets/loading_animation2.json'
+import Lottie from "react-lottie";
+import * as animationData from "../../assets/loading_animation4.json";
+import { useEffect, useState } from "react";
 
 interface TableProps {
   clients: Client[];
   selectedClient?: (client: Client) => void;
   deletedClient?: (client: Client) => void;
+  isLoading?: boolean;
 }
 
 export default function Table(props: TableProps) {
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading_Delete, setIsLoading_Delete] = useState(false);
+
+  useEffect(() => {
+    if (!props.clients || props.clients.length === 0) {
+      console.log(props.clients);
+      console.log("nao tem props clients");
+      setIsLoading(true);
+    } else {
+      console.log("Tem props clients");
+      console.log(props.clients);
+      setIsLoading(false);
+    }
+  }, [props.clients]);
+
   const defaultOptions = {
     loop: true,
     autoplay: true,
     animationData: animationData,
     rendererSettings: {
-      PreserveAspectRatio: 'xMidYMid slice'
-    }
-  }
+      PreserveAspectRatio: "xMidYMid slice",
+    },
+  };
 
-  const showActions = props.deletedClient || props.selectedClient
+  const showActions = props.deletedClient || props.selectedClient;
+
   const renderHeader = (
     <tr>
       <th className="text-left p-3">Código</th>
@@ -29,16 +48,36 @@ export default function Table(props: TableProps) {
     </tr>
   );
 
-  const renderActions = (client: Client, index:number) => {
+  const loading_delete_animation = <Lottie
+  classname={"flex text-left h-5"}
+  options={defaultOptions}
+  height={80}
+  width={80}
+/>
+
+  function press_Delete_Icon(client: Client){
+    setIsLoading(true)
+    props.deletedClient?.(client)
+  }
+
+  const renderActions = (client: Client, index: number) => {
     return (
       <td className="flex justify-center">
         {props.selectedClient && (
-          <button onClick={()=> props.selectedClient?.(client)} className={`flex justify-center items-center"text-dusk" rounded-full hover:bg-purple-50 p-2 m-1`}>
+          <button
+            onClick={() => props.selectedClient?.(client)}
+            className={`flex justify-center items-center"text-dusk" rounded-full hover:bg-purple-50 p-2 m-1`}
+          >
             {EditIcon}
           </button>
         )}
         {props.deletedClient && (
-          <button onClick={()=> props.deletedClient?.(client)} className={`flex justify-center items-center ${index % 2 === 0 ? "text-orange-900" : "text-red-800"} rounded-full hover:bg-purple-50 p-2 m-1`}>
+          <button
+            onClick={() => press_Delete_Icon(client)}
+            className={`flex justify-center items-center ${
+              index % 2 === 0 ? "text-orange-900" : "text-red-800"
+            } rounded-full hover:bg-purple-50 p-2 m-1`}
+          >
             {TrashIcon}
           </button>
         )}
@@ -46,6 +85,23 @@ export default function Table(props: TableProps) {
     );
   };
 
+  const Loading_Animation = (
+    <tbody>
+      <tr>
+        <td className="text-left p-3 pr-40"></td>
+        <td>
+          <Lottie
+            classname={"flex text-left h-5"}
+            options={defaultOptions}
+            height={80}
+            width={80}
+          />
+        </td>
+        <td className="text-left p-3"></td>
+        <td className="text-left p-3"></td>
+      </tr>
+    </tbody>
+  );
   const renderData = props.clients?.map((client, index) => {
     return (
       <tr
@@ -62,8 +118,6 @@ export default function Table(props: TableProps) {
     );
   });
 
-  const Loading_Animation = <Lottie options={defaultOptions} height={400} width={400}/>
-
   return (
     <table className="w-full rounded-xl overflow-hidden">
       <thead
@@ -73,7 +127,7 @@ export default function Table(props: TableProps) {
       >
         {renderHeader}
       </thead>
-      <tbody>{renderData? renderData : Loading_Animation}</tbody>
+      {isLoading ? Loading_Animation : <tbody>{renderData}</tbody>}
     </table>
   );
 }

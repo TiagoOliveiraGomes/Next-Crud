@@ -45,6 +45,7 @@ export default function useClient () {
     return {
         client,
         clientList,
+        getAll,
         selectClient,
         newClient,
         SaveChangesClient,
@@ -52,6 +53,6 @@ export default function useClient () {
         setTable,
         visible_table,
         visible_form,
-        isLoading
+        isLoading,
     }
 }
